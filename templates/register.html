@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Login</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="/statics/images/me.ico"/>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/statics/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/statics/css/main.css">
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script src="/statics/js/main.js"></script>
+</head>
+<body>
+
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<div class="login100-form-title" style="background-image: url(/statics/images/bg-01.jpg);">
+					<span class="login100-form-title-1">
+						Sign Up
+					</span>
+				</div>
+
+				<form action="" method="POST" class="login100-form validate-form">
+					{% csrf_token %}
+					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+                        <span class="label-input100">Username</span>
+                        {{ reg_form.username }}
+                        <span class="focus-input100"></span>
+                    </div>
+                    <p class="text-danger">{{ reg_form.username.errors.as_text }}</p>
+                    <div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
+                        <span class="label-input100">E-mail</span>
+                        {{ reg_form.email }}
+                        <span class="focus-input100"></span>
+                    </div>
+                    <p class="text-danger">{{ reg_form.email.errors.as_text }}</p>
+                    <div class="wrap-input100 validate-input m-b-18" data-validate = "Enter password">
+                        <span class="label-input100">Password</span>
+                        {{ reg_form.password }}
+                        <span class="focus-input100"></span>
+                    </div>
+                    <p class="text-danger">{{ reg_form.password.errors.as_text }}</p>
+                    <div class="wrap-input100 validate-input m-b-18" data-validate = "Enter password again">
+                        <span class="label-input100">Password Again</span>
+                        {{ reg_form.password_again }}
+                        <span class="focus-input100"></span>
+                    </div>
+                    <p class="text-danger">{{ reg_form.password_again.errors.as_text }}</p>
+					<div class="wrap-input100 validate-input m-b-18" data-validate = "Enter The PIN">
+                        <span class="label-input100">Your PIN</span>
+                        {{ reg_form.verification_code }}
+                        <span class="focus-input100"></span>
+                    </div>
+                    <p class="text-danger">{{ reg_form.verification_code.errors.as_text }}</p>
+
+					<div class="flex-sb-m w-full p-b-30">
+						<div>
+							<button id="send_code" class="btn btn-outline-success btn-sm">Get PIN</button>
+						</div>
+
+						<div>
+							<a href="{% url 'login' %}" class="txt1">
+								Already Have An Account?
+							</a>
+						</div>
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn" type="submit">
+							Register
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+{% block script_extends %}
+<script type="text/javascript">
+	$("#send_code").click(function(){
+            var email = $("#id_email").val();
+            if(email==""){
+                $("#tip").text('* 邮箱不能为空');
+                return false;
+            }
+
+            // 发送验证码
+            $.ajax({
+                url: "{% url 'send_verification_code' %}",
+                type: "GET",
+                data: {
+                    'email': email,
+					'send_for': 'register_code'
+                },
+                cache: false,
+                success: function(data){
+                    if(data['status']=='ERROR'){
+                        alert(data['status']);
+                    }
+                }
+            });
+
+            // 把按钮变灰
+            $(this).addClass('disabled');
+            $(this).attr('disabled', true);
+            var time = 60;
+            $(this).text(time + 's');
+            var interval = setInterval(() => {
+                if(time <= 0){
+                    clearInterval(interval);
+                    $(this).removeClass('disabled');
+                    $(this).attr('disabled', false);
+                    $(this).text('发送验证码');
+                    return false;
+                }
+
+                time --;
+                $(this).text(time + 's');
+            }, 1000);
+        });
+</script>
+{% endblock %}
+</html>

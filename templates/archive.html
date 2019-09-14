@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block header_extends %}
+{# <link rel="stylesheet" href="/statics/css/archive.css"> #}
+<link rel="stylesheet" type="text/css" href="/statics/css/jqcloud.css" />
+
+<script type="text/javascript" src="/statics/js/jqcloud-1.0.4.js"></script>
+<script src="http://cdn.highcharts.com.cn/highcharts/highcharts.js"></script>
+{% endblock %}
+
+{% block about_me %}
+<div class="w3-hide-medium w3-hide-small">
+{% include 'about_me.html' %}
+</div>
+{% endblock %}
+
+{% block pre %}
+<div class="w3-card-4 w3-margin">
+    <div class="w3-container w3-padding">
+        <h4>ReadNums</h4>
+    </div>
+<div class="w3-container w3-white w3-center">
+    <!-- 图表容器 DOM -->
+    <div id="container"></div>
+
+    <script>
+        // 图表配置
+        var options = {
+            chart: { type: 'line' },                        //指定图表的类型，默认是折线图（line）
+            title: { text: null },                          // 标题
+            xAxis: {
+                categories: {{ dates|safe }},                // x 轴分类
+                tickmarkPlacement: 'on',
+            },
+            yAxis: {
+                title: { text: null },                      // y 轴标题
+                labels: { enabled: false },
+                gridLineDashStyle: 'Dash',
+            },
+            series: [{                                      // 数据列
+                name: '阅读量',                             // 数据列名
+                data: {{ click_nums }}                      // 数据
+            }],
+            plotOptions: {
+                line: {
+                    dataLabels: { enabled: true }
+                        }
+            },
+            //legend: { enabled: false },
+            credits: { enabled: false },
+        };
+        // 图表初始化函数
+        var chart = Highcharts.chart('container', options);
+    </script>
+
+</div>
+</div>
+<hr>
+<div class="w3-card-4 w3-margin">
+    <div class="w3-container w3-padding">
+        <h4>Tags</h4>
+    </div>
+<div class="w3-container w3-white w3-padding">
+    <div id="cloud"></div>
+
+<script type="text/javascript">
+        var word_array = {{ tags_json|safe }};
+        $(function() {
+        // When DOM is ready, select the container element and call the jQCloud method, passing the array of words as the first argument.
+        $("#cloud").jQCloud(word_array,{
+            removeOverflowing: true,
+            shape: "elliptic",
+            height: 200,
+            margin: 0
+            }
+        );
+      });
+    </script>
+
+    <hr>
+
+    {% for tag in tag_list %}
+        <a href="{% url 'tag_name' tag.name %}"  style="text-decoration: none;"><button class="w3-btn w3-round w3-small w3-padding-small w3-light-blue w3-margin-bottom">{{tag.name}} ({{ tag.blog_num }})</button></a>
+    {% empty %}<span>暂无分类</span>
+    {% endfor %}
+</div>
+</div>
+<hr>
+{% endblock %}
+
+{% block content %}
+<div class="w3-card-4 w3-margin">
+    <div class="w3-container w3-padding">
+        <h4>Archive (Group By Time)</h4>
+    </div>
+<div class="w3-white w3-padding">
+    <div class="w3-padding w3-ul w3-container">
+{% regroup all_blogs.object_list by create_time.year as dates_by_year %}
+    {% for year in dates_by_year %}
+        {{ year.grouper }}
+        {% regroup year.list by create_time.month as dates_by_month %}
+        {% for month in dates_by_month %}
+        {{ month.grouper }}
+            {% for blog in month.list %}
+                <a class="post-title-link" href="{% url 'blog_id' blog.id %}" itemprop="url">
+                    <li><p>{{ blog.title }}<div class="w3-right">{{blog.create_time}}</div></p></li>
+                </a>
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+        </div>
+</div>
+</div>
+{# 分页 #}
+<div class="w3-center">
+    <div class="w3-bar">
+        {% if all_blogs.has_previous %}
+           <a href="?{{ all_blogs.previous_page_number.querystring }}" style="text-decoration: none;">
+                <button class="w3-btn w3-black w3-tiny w3-round w3-padding-small w3-hide-large w3-hide-medium">
+                    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                </button>
+            </a>
+        {% else %}
+            <button class="w3-btn w3-black w3-tiny w3-round w3-padding-small w3-hide-large w3-hide-medium"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>
+        {% endif %}
+        {% for page in all_blogs.pages %}
+            {% if page %}
+                {% ifequal page all_blogs.number %}
+                    <button class="w3-btn w3-gray w3-tiny w3-round w3-padding-small">{{ page }}</button>
+                {% else %}
+                    <a href="?{{ page.querystring }}" style="text-decoration: none;">
+                    <button class="w3-btn w3-black w3-hover-gray w3-tiny w3-round w3-padding-small">
+                    {{ page }}
+                    </button>
+                    </a>
+                {% endifequal %}
+            {% else %}
+                ...
+            {% endif %}
+        {% endfor %}
+        {% if all_blogs.has_next %}
+             <a href="?{{ all_blogs.next_page_number.querystring }}">
+                <button class="w3-btn w3-black w3-tiny w3-round w3-padding-small w3-hide-large w3-hide-medium">
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                </button>
+            </a>
+        {% else %}
+        <button class="w3-btn w3-black w3-tiny w3-round w3-padding-small w3-hide-large w3-hide-medium"><i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+        {% endif %}
+    </div>
+</div>
+<hr>
+{% endblock %}
+
+{% block popular_posts %}
+  <div class="w3-card w3-margin">
+    <div class="w3-container w3-padding">
+      <h4>Popular Posts</h4>
+    </div>
+      <ul class="w3-ul w3-hoverable w3-white">
+
+        {% for blog in hot_blog_for_7_days %}
+            <li class="w3-padding-16 w3-container">
+            <img src="{{ blog.cover_min.url }}" alt="cover min" class="w3-left w3-margin-right" style="width:50px">
+                <a href="{% url 'blog_id' blog.id %}">
+                    <span class="w3-large">{{ blog.title }}</span>
+                </a><br>
+            <span>{{ blog.title_description }}</span>
+            </li>
+        {% endfor %}
+
+    </ul>
+  </div>
+<hr>
+{% endblock %}
+
+{% block tags %}
+    <div class="w3-card w3-margin">
+    <div class="w3-container w3-padding">
+        <h4><a href="/archive/">Tags & Category</a></h4>
+    </div>
+    <div class="w3-container w3-white">
+        <div class="w3-margin-top">
+        <p>
+            {% for tag in all_tags %}
+            <a href="{% url 'tag_name' tag.name %}" style="text-decoration: none;"><span class="w3-tag w3-light-grey w3-hover-shadow w3-small w3-margin-bottom">{{ tag.name }}</span></a>
+            {% endfor %}
+        </p>
+        <hr>
+        <p>
+            {% for category in all_categorys %}
+            <a href="{% url 'category_name' category.name %}"><span class="w3-tag w3-light-grey w3-hover-shadow w3-small w3-margin-bottom">{{ category.name }}</span></a>
+            {% endfor %}
+        </p>
+        </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block footer%}
+        {% if all_blogs.has_previous %}
+                <a href="?{{ all_blogs.previous_page_number.querystring }}" style="text-decoration: none;">
+                    <button class="w3-button w3-black w3-padding-large w3-margin-bottom">
+                        Previous
+                    </button>
+                </a>
+        {% else %}
+                    <button class="w3-button w3-disabled w3-black w3-padding-large w3-margin-bottom">previous</button>
+        {% endif %}
+
+        {% if all_blogs.has_next %}
+                <a href="?{{ all_blogs.next_page_number.querystring }}">
+                    <button class="w3-button w3-black w3-padding-large w3-margin-bottom" style="text-decoration: none;">
+                        Next »
+                    </button>
+                </a>
+        {% else %}
+                    <button class="w3-button w3-disabled w3-black w3-padding-large w3-margin-bottom">Next »</button>
+        {% endif %}
+{% endblock %}

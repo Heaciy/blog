@@ -1,0 +1,18 @@
+/* Text link style */
+#scrollUp {
+  bottom: 60px;
+  right: 60px;
+  font-size: 13px;
+  text-align: center;
+    text-decoration: none;
+  color: #878787;
+  letter-spacing: 2px;
+  border-bottom: 2px solid #878787;
+  -webkit-transition-duration: 500ms;
+  transition-duration: 500ms;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  line-height: 1; }
+  #scrollUp:hover {
+    color: #30336b;
+    border-color: #30336b; }

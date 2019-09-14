@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Login</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="/statics/images/me.ico"/>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/statics/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/statics/css/main.css">
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="/statics/js/main.js"></script>
+</head>
+<body>
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<div class="login100-form-title" style="background-image: url(/statics/images/bg-01.jpg);">
+					<span class="login100-form-title-1">
+						Sign In
+					</span>
+				</div>
+
+				<form action="" method="POST" class="login100-form validate-form">
+					{% csrf_token %}
+					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+						<span class="label-input100">Username</span>
+						{{ login_form.username_or_email }}
+						<span class="focus-input100"></span>
+					</div>
+
+					<div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
+						<span class="label-input100">Password</span>
+						{{ login_form.password }}
+						<span class="focus-input100"></span>
+					</div>
+					<p class="text-danger">{{ login_form.non_field_errors.as_text }}</p>
+
+					<div class="flex-sb-m w-full p-b-30">
+						<div>
+							<a href="javascript:forgotpassword();" class="txt1">
+								Forgot Password?
+							</a>
+						</div>
+
+						<div>
+							<a href="{% url 'register' %}" class="txt1">
+								Register For Free?
+							</a>
+						</div>
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn" type="submit">
+							Login
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+<!-- Modal for forgot passord -->
+	<div class="modal fade" id="forgotpassword" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="forgot_password_modal_form" action="" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">忘记密码</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% for field in Forgotpasswordform %}
+                        {% if not field.is_hidden %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% endif %}
+                        {{ field }}
+                    {% endfor %}
+                    <span id="forgot_password_modal_tip" class="text-danger"></span>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="clearfix"></div>
+                    <div class="pull-left">
+                        <button id="send_code" class="btn btn-outline-success">Get PIN</button>
+                    </div>
+                    <div class="pull-right">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+	function forgotpassword() {
+		$('#forgotpassword').modal('show');
+	};
+	$("#send_code").click(function(){
+            var email = $("#id_email").val();
+            if(email==""){
+                $("#tip").text('* 邮箱不能为空');
+                return false;
+            }
+
+            // 发送验证码
+            $.ajax({
+                url: "{% url 'send_verification_code' %}",
+                type: "GET",
+                data: {
+                    'email': email,
+                    'send_for': 'forgot_password_code'
+                },
+                cache: false,
+                success: function(data){
+                    if(data['status']=='ERROR'){
+                        alert(data['status']);
+                    }
+                }
+            });
+
+            // 把按钮变灰
+            $(this).addClass('disabled');
+            $(this).attr('disabled', true);
+            var time = 60;
+            $(this).text(time + 's');
+            var interval = setInterval(() => {
+                if(time <= 0){
+                    clearInterval(interval);
+                    $(this).removeClass('disabled');
+                    $(this).attr('disabled', false);
+                    $(this).text('发送验证码');
+                    return false;
+                }
+
+                time --;
+                $(this).text(time + 's');
+            }, 1000);
+        });
+	$("#forgot_password_modal_form").submit(function(event){
+            event.preventDefault();
+            $.ajax({
+                url: '{% url "forgot_password" %}',
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    if(data['status']=='SUCCESS'){
+                        window.location.reload();
+                    }else{
+                        $('#forgot_password_modal_tip').text(data['message']);
+                    }
+                }
+            });
+        });
+</script>
+</html>

@@ -1,0 +1,8 @@
+.idea/
+ll_env/
+whoosh_index/
+__pycache__/
+migrations/
+settings.py
+statics/admin/
+statics/ckeditor/

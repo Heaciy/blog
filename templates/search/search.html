@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load highlight %}
+
+{% block others %}
+<div class="w3-content" style="max-width:1400px">
+   <div class="row no-gutters flex-column-reverse flex-md-row">
+       <div class="col-md-8">
+           <div class="w3-card-4 w3-margin w3-white">
+               <img src="/statics/images/p_p.png" alt="Privacy Policy" style="width:100%">
+               <div class="w3-container">
+                    {% if query %}
+                       {% for blog in page.object_list %}
+                           <p>
+                               <a href="{% url 'blog_id' blog.object.id %}"><h3>{{ blog.object.title }}</h3></a>
+                           </p>
+                            <p>{% highlight blog.object.content with query %}</p>
+                       {% empty %}
+                           <p>No results found.</p>
+                       {% endfor %}
+
+                       {% if page.has_previous or page.has_next %}
+                           <div>
+                               {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                               |
+                               {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                           </div>
+                       {% endif %}
+                   {% else %}
+                       {# Show some example queries to run, maybe query syntax, something else? #}
+                   {% endif %}
+               </div>
+           </div>
+           <hr>
+       </div>
+       <div class="col-md-4">
+            <div class="sticky-top w3-card w3-margin w3-white">
+                <div class="w3-container">
+                    <form class="my-2" role="search" method="get" action="{% url 'haystack_search' %}">
+                        <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
+                        <button type="button" class="btn btn-dark"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+   </div>
+</div>
+{% endblock %}

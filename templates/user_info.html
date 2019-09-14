@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block others %}
+<div class="w3-content" style="max-width:1400px">
+    {% if user.is_authenticated %}
+    <div class="row no-gutters flex-column-reverse flex-md-row">
+        <div class="col-md-8">
+            <div class="w3-card-4 w3-margin w3-white">
+                <div class="w3-bar w3-padding-small" style="background-color: #f8f7f4">
+                    <h3 class="w3-left"><b>User Info</b></h3>
+                </div>
+                <div class="w3-container">
+                    <h3>{{ user.username }}</h3>
+                    <ul class="list-unstyled">
+                        <li>Nickname: {{ user.get_nickname }}<a href="javascript:change({% if user.is_authenticated %}1{% else %}0{% endif %},0);" style="color: #0f74a8">    <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></li>
+                        <li>E-Mail:  {% if user.email %}{{ user.email }}{% else %}Unbounded<a href="javascript:change({% if user.is_authenticated %}1{% else %}0{% endif %},1);" style="color: #0f74a8">      <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>{% endif %}</li>
+                        <li>Last login time: {{ user.last_login | date:"Y-m-d H:i:s" }}</li>
+                        <li><a href="javascript:change({% if user.is_authenticated %}1{% else %}0{% endif %},2);" style="color: #0f74a8">Change Password    <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="w3-card-4 w3-margin w3-white">
+                <div class="w3-container w3-center py-3" style="background-color: #f8f7f4">
+                    <img src="/statics/images/user.png" alt="User" style="width:30%">
+                </div>
+                <div class="w3-margin w3-container">
+                    <h3>{{ user.username }}</h3>
+                    <ul class="list-unstyled">
+                        <li>Nickname: {{ user.get_nickname }}</li>
+                        <li>E-Mail:  {% if user.email %}{{ user.email }}{% else %}Unbounded{% endif %}</li>
+                        <li>Last login time: {{ user.last_login | date:"Y-m-d H:i:s" }}</li>
+                    </ul>
+                </div>
+                <div class="w3-container w3-center py-3">
+                    <img src="/statics/images/working.gif" alt="User" style="width:100%">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <script type="text/javascript">
+        window.location.href = '/'
+    </script>
+    {% endif %}
+</div>
+<!-- Modal for changenickname -->
+<div class="modal fade" id="change_nickname_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="change_nickname_modal_form" action="" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">修改昵称</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% for field in Nicknameform %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    <br>
+                    {% endfor %}
+                    <span id="change_nickname_modal_tip" class="text-danger"></span>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal for Bind Email -->
+<div class="modal fade" id="bind_email" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="bind_email_modal_form" action="" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">绑定邮箱</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% for field in Bindemailform %}
+                        {% if not field.is_hidden %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% endif %}
+                        {{ field }}
+                    {% endfor %}
+                    <span id="tip" class="text-danger"></span><br>
+                    <span id="bind_email_modal_tip" class="text-danger"></span>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="clearfix"></div>
+                    <div class="pull-left">
+                        <button id="send_code" class="btn btn-outline-success">Get PIN</button>
+                    </div>
+                    <div class="pull-right">
+                        <button type="submit" class="btn btn-outline-primary">Save changes</button>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal for changepassword -->
+<div class="modal fade" id="change_password" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="change_password_modal_form" action="" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">修改密码</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% for field in Changepasswordform %}
+                        {% if not field.is_hidden %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% endif %}
+                        {{ field }}
+                    {% endfor %}
+                    <span id="change_password_modal_tip" class="text-danger"></span>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script_extends %}
+<script type="text/javascript">
+    function change(log_id, change_id) {
+        if(log_id==1){
+            if(change_id==0){
+                $('#change_nickname_modal').modal('show');
+            }else if(change_id==1) {
+                $('#bind_email').modal('show');
+            }else {
+                $('#change_password').modal('show');
+            }
+            }else {
+                $('#login_modal').modal('show');
+            }
+    }
+    $("#change_nickname_modal_form").submit(function(event){
+            event.preventDefault();
+            $.ajax({
+                url: '{% url "change_nikename_medal" %}',
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    if(data['status']=='SUCCESS'){
+                        window.location.reload();
+                    }else{
+                        $('#change_nickname_modal_tip').text('新昵称不能为空');
+                    }
+                }
+            });
+        });
+    $("#send_code").click(function(){
+            var email = $("#id_email").val();
+            if(email==""){
+                $("#tip").text('* 邮箱不能为空');
+                return false;
+            }
+
+            // 发送验证码
+            $.ajax({
+                url: "{% url 'send_verification_code' %}",
+                type: "GET",
+                data: {
+                    'email': email,
+                    'send_for': 'bind_email_code'
+                },
+                cache: false,
+                success: function(data){
+                    if(data['status']=='ERROR'){
+                        alert(data['status']);
+                    }
+                }
+            });
+
+            // 把按钮变灰
+            $(this).addClass('disabled');
+            $(this).attr('disabled', true);
+            var time = 60;
+            $(this).text(time + 's');
+            var interval = setInterval(() => {
+                if(time <= 0){
+                    clearInterval(interval);
+                    $(this).removeClass('disabled');
+                    $(this).attr('disabled', false);
+                    $(this).text('发送验证码');
+                    return false;
+                }
+
+                time --;
+                $(this).text(time + 's');
+            }, 1000);
+        });
+    $("#bind_email_modal_form").submit(function(event){
+            event.preventDefault();
+            $.ajax({
+                url: '{% url "bind_email" %}',
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    if(data['status']=='SUCCESS'){
+                        window.location.reload();
+                    }else{
+                        $('#bind_email_modal_tip').text(data['message']);
+                    }
+                }
+            });
+        });
+    $("#change_password_modal_form").submit(function(event){
+            event.preventDefault();
+            $.ajax({
+                url: '{% url "change_password" %}',
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    if(data['status']=='SUCCESS'){
+                        window.location.reload();
+                    }else{
+                        $('#change_password_modal_tip').text(data['message']);
+                    }
+                }
+            });
+        });
+</script>
+{% endblock %}

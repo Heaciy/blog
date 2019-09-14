@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+<title>Heyis.me</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="/statics/images/me.ico">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/statics/css/w3.css" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <link rel="stylesheet" href="/statics/css/scrollUP.css">
+    <link rel="stylesheet" href="/statics/css/hmbrgr.css" type="text/css">
+    <link rel="stylesheet" href="/statics/css/preloader.css" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster"><!--字体-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Caslon+Text|Lora|Merriweather&display=swap"><!--字体-->
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="/statics/js/jquery.scrollUp.js"></script>
+    <script src="/statics/js/jquery.hmbrgr.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    {% block header_extends %}{% endblock %}
+<style>
+    body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+    a {text-decoration: none;}
+    a:hover{text-decoration:none;}
+    .w3-tangerine {
+                  font-family: "Tangerine", serif;
+                  }
+    .w3-Merriweather {
+                  font-family: 'Merriweather', serif;
+                  }
+    span.highlighted {
+        color: #009688;
+    }
+    {% block style %}{% endblock %}
+</style>
+</head>
+<body class="w3-light-grey" onload="load()">
+<div id="preloader">
+  <div id="loader"></div>
+</div>
+<!-- w3-content defines a container for fixed size centered content,
+and is wrapped around the whole page content, except for the footer in this example -->
+<div class="w3-content" style="max-width:1400px">
+<!-- Header -->
+{% include 'header.html' %}
+{% block others %}{% endblock %}
+<!-- Grid -->
+<div class="w3-row">
+<!-- Blog entries -->
+<div class="w3-col l8 s12">
+    <!-- Blog entry -->
+    {% block pre %}{% endblock %}
+    {% block content %}{% endblock %}
+    {% block more %}{% endblock %}
+<!-- END BLOG ENTRIES -->
+</div>
+<!-- Introduction menu -->
+<div class="w3-col l4">
+  <!-- About Card -->
+    {% block siderbar %}{% endblock %}
+    {% block about_me %}{% endblock %}
+  <!-- Posts -->
+    {% block popular_posts %}{% endblock %}
+  <!-- Labels / tags -->
+    {% block tags %}{% endblock %}
+    <hr>
+<!-- END Introduction Menu -->
+</div>
+<!-- END GRID -->
+</div><br>
+<!-- END w3-content -->
+</div>
+
+<!-- Footer -->
+<footer class="w3-dark-grey">
+    <div class="w3-container row flex-md-row">
+        <div class="col-sm-3 col-12 order-4 order-sm-1 w3-container w3-padding-32">
+            <div class="w3-hide-small">
+                <div class="w3-bar">
+                    {% block footer %}
+                    {% endblock %}
+                </div>
+                <h5 class="w3-tangerine">Powered by</h5>
+                <A href="#" target="_blank"><img src="/statics/images/logo.png" alt="Heyis.me" class="w3-left" style="width:60%"></A>
+                <br>
+                <br>
+            </div>
+            <h5 class="w3-tangerine">Contact us</h5>
+            <div class="w3-bar">
+                <a href="https://facebook.com/Heaciy/" target="_blank" data-toggle="tooltip" data-placement="bottom"  title="Facebook"><i class="fa fa-facebook-official w3-hover-opacity w3-large"></i></a>
+                <a href="https://instagram.com/Heaciyyy/" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Instagram"><i class="fa fa-instagram w3-hover-opacity w3-large"></i></a>
+                <a href="https://twitter.com/Heaciy/" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Twitter"><i class="fa fa-twitter w3-hover-opacity w3-large"></i></a>
+                <a href="https://weibo.com/u/7169836820" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Weibo"><i class="fa fa-weibo w3-hover-opacity w3-large"></i></a>
+                <a href="https://github.com/Heaciy/" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Github"><i class="fa fa-github w3-hover-opacity w3-large"></i></a>
+            </div>
+        </div>
+
+        <div class="col-sm-3 col-12 order-2 order-sm-2 w3-container w3-left w3-padding-32">
+            <H5 class="w3-tangerine">Contact</H5>
+            <p><i class="fa fa-map-marker"></i>   Wuhan University of Science and Technology, Hongshan District, Wuhan, China</p>
+            <p><i class="fa fa-phone"></i>    +86 15623812309</p>
+            <p><i class="fa fa-envelope"></i>   Heaciy@outlook.com</p>
+        </div>
+
+        <div class="col-sm-3 col-12 order-3 order-sm-3 w3-container w3-left w3-padding-32">
+            <h5 class="w3-tangerine">Info</h5>
+            <P><i class="fa fa-long-arrow-right"></i><a href="{% url 'get_faq' %}#0">  FAQ</a></P>
+            <P><i class="fa fa-long-arrow-right"></i><a href="{% url 'get_faq' %}#1">  About Us</a></P>
+            <p><i class="fa fa-long-arrow-right"></i><a href="{% url 'get_faq' %}#2">  Privacy Policy</a></p>
+            <p><i class="fa fa-long-arrow-right"></i><a href="{% url 'get_faq' %}#3">  Terms & Conditions</a></p>
+        </div>
+
+        <div class="col-sm-3 col-12 order-1 order-sm-4 w3-container w3-left w3-padding-32">
+            <div class="w3-hide-small">
+                {% if user.is_authenticated %}
+                <h5 class="w3-tangerine"><a href="{% url 'user_info' %}">{{ user.username }}</a></h5>
+                    <p><i class="fa fa-home"></i><a href="/">    Home</a></p>
+                    <p><i class="fa fa-sign-out"></i><a href="{% url 'logout' %}?from={{ request.get_full_path }}">    Logout</a></p>
+                    {% if user.is_staff or user.is_superuser %}
+                        <p><i class="fa fa-coffee" aria-hidden="true"></i><a href="{% url 'admin:index' %}">    BackEnd</a></p>
+                    {% endif %}
+                    <form class="form-inline my-2 my-lg-0" role="search" method="get" action="{% url 'haystack_search' %}">
+                        <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search" style="background-color:transparent" required>
+                    </form>
+                    <br>
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="email" placeholder="Subscribe" aria-label="E-mail">
+                    </form>
+                {% else %}
+                    <h5 class="w3-tangerine">User</h5>
+                    <p><i class="fa fa-home"></i><a href="/">    Home</a></p>
+                    <p><i class="fa fa-sign-in"></i><a href="{% url 'login' %}?from={{ request.get_full_path }}">    Login</a></p>
+                    <form class="form-inline my-2 my-lg-0" role="search" method="get" action="{% url 'haystack_search' %}">
+                        <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search" style="background-color:transparent" required>
+                    </form>
+                    <br>
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="email" placeholder="Subscribe" aria-label="E-mail">
+                    </form>
+                {% endif %}
+            </div>
+            <div class="w3-hide-large w3-hide-medium">
+                {% block footer_small %}{% endblock %}
+                <a href="/"><button type="button" class="btn btn-outline-light btn-block"><i class="fa fa-home"></i>    Home</button></a>
+                <h5 class="w3-tangerine">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb" style="background-color:transparent">
+                            {% if user.is_authenticated %}
+                                <li class="breadcrumb-item"><a href="{% url 'user_info' %}">{{ user.username }}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'user_info' %}">Personal</a></li>
+                                <li class="breadcrumb-item" aria-current="page"><a href="{% url 'logout' %}?from={{ request.get_full_path }}">Logout</a></li>
+                            {% else %}
+                                <li class="breadcrumb-item"><a href="{% url 'login' %}?from={{ request.get_full_path }}">Usre</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'login' %}?from={{ request.get_full_path }}">Signin</a></li>
+                                <li class="breadcrumb-item" aria-current="page"><a href="{% url 'register' %}?from={{ request.get_full_path }}">Signup</a></li>
+                            {% endif %}
+                        </ol>
+                    </nav>
+                </h5>
+                <form class="form-inline my-2 my-lg-0" role="search" method="get" action="{% url 'haystack_search' %}">
+                    <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search" style="background-color:transparent" required>
+                </form>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="email" placeholder="Subscribe" aria-label="E-mail">
+                </form>
+            </div>
+        </div>
+    </div>
+        <div class="w3-bar w3-center w3-padding-small"><p>Copyright ©2019 All Rights Reserved</p></div>
+ </footer>
+</body>
+
+<script type="text/javascript">
+function load() {
+    var preloader = document.getElementById('preloader');
+    var a= setTimeout("preloader.style.transition='opacity 0.3s'",0)
+    //设置透明度改变的过渡时间为0.3秒
+    var b= setTimeout("preloader.style.opacity=0",500)
+    //0.5秒后加载动画开始变为透明
+    var c= setTimeout("preloader.style.display='none'",800)
+    //当透明度为0的时候，隐藏掉它
+};
+$(function () {
+    $.scrollUp({
+        scrollName: 'scrollUp',      // Element ID
+        scrollDistance: 300,         // Distance from top/bottom before showing element (px)
+        scrollFrom: 'top',           // 'top' or 'bottom'
+        scrollSpeed: 300,            // Speed back to top (ms)
+        easingType: 'linear',        // Scroll to top easing (see http://easings.net/)
+        animation: 'fade',           // Fade, slide, none
+        animationSpeed: 200,         // Animation speed (ms)
+        scrollTrigger: false,        // Set a custom triggering element. Can be an HTML string or jQuery object
+        scrollTarget: false,         // Set a custom target element for scrolling to. Can be element or number
+        scrollText: 'Top',           // Text for element, can contain HTML
+        scrollTitle: false,          // Set a custom <a> title if required.
+        scrollImg: false,            // Set true to use image
+        activeOverlay: false,        // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+        zIndex: 2147483647           // Z-Index for the overlay
+    });
+});
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+});
+</script>
+{% block script_extends %}{% endblock %}
+</html>

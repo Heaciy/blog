@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load comment_tags %}
+{% block header_extends %}
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
+
+{% block style %}
+    div.django-ckeditor-widget {
+        width: 100%
+    }
+    div.comment {
+        border-bottom: 1px dashed #ccc;
+        margin-bottom: 0.5em;
+        padding-bottom: 0.5em;
+    }
+    div.reply {
+        margin-bottom: 2em;
+        margin-left: 2em;
+    }
+    div#reply_content_container {
+        border: 1px solid #d1d1d1;
+        border-bottom: none;
+        background-color: #f8f8f8;
+        overflow: hidden;
+        padding: 1em 1em 0.5em;
+    }
+    p#reply_title {
+        border-bottom: 1px dashed #ccc;
+        padding-bottom: 0.5em;
+}
+{% endblock %}
+
+{% block about_me %}
+<div class="w3-hide-medium w3-hide-small">
+    {% include 'about_me.html' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="w3-card-4 w3-margin w3-white">
+    <img src="{{ blog.cover.url }}" alt="Nature" style="width:100%">
+    <div class="w3-container">
+      <h3><b>{{ blog.title }}</b></h3>
+        <h5>{{ blog.title_description }}, <i class="fa fa-calendar"></i>  <span class="w3-opacity">{{ blog.create_time | date:"Y m d" }}</span>,  <i class='far fa-eye'></i>  <span  class="w3-opacity">{{ blog.get_click_nums}}</span></h5>
+    </div>
+    <div class="w3-container">
+      <p>
+        {{ blog.content | safe }}
+      </p>
+      <div class="w3-row">
+          <div class="w3-col m8 s12">
+              <p><a href="javascript:history.go(-1);" style="text-decoration: none;"><button class="w3-button w3-padding-large w3-white w3-border"><b>&laquo;Back</b></button></a></p>
+          </div>
+          <div class="w3-col m4 w3-hide-small">
+          <p><span class="w3-padding-large w3-right"><b>Comments  </b> <span class="w3-tag">{% get_comment_count blog %}</span></span></p>
+          </div>
+      </div>
+    </div>
+  </div>
+<hr>
+<div class="w3-card w3-margin w3-white">
+    <div class="w3-bar w3-padding-small" style="background-color: #f8f7f4">
+            <div class="w3-bar-item w3-padding-small"><h3><b>Comments</b></h3></div>
+            <div class="w3-bar-item w3-padding-small w3-right">
+                <h3><a class="hmbrgr one" data-toggle="collapse" href="#demo" role="button" aria-expanded="false" aria-controls="collapse"></a></h3>
+            </div>
+            <script>
+                  $('.hmbrgr.one').hmbrgr({
+                      width     : 30,
+                      height    : 25,
+                      barHeight : 4,
+                      barColor  : '#878787'
+                  });
+            </script>
+    </div>
+    <div class="w3-container w3-margin-bottom collapse" id="demo">
+        <div class="w3-margin">
+            {% if user.is_authenticated %}
+                <form id="comment_form" action="{% url 'update_comment' %}" method="POST">
+                    <label>{{ user.get_nickname_or_username }}，欢迎评论~</label>
+                    <div id="reply_content_container" style="display: none;">
+                        <p id="reply_title">回复： </p>
+                        <div id="reply_content"></div>
+                    </div>
+                    {% csrf_token %}
+                    {% get_comment_form blog as comment_form %}
+                    {% for field in comment_form %}
+                        {{ field }}
+                    {% endfor %}
+                    <span id="comment_error" class="text-danger pull-left"></span>
+                    <input type="submit" value="评论" class="btn btn-primary pull-right">
+                </form>
+                <br>
+            {% else %}
+                未登陆，<a href="{% url 'login' %}?from={{ request.get_full_path }}" style="color: #0f74a8">登陆</a>以评论
+            {% endif %}
+        <hr>
+            <div class="comment_area">
+                评论列表
+                <div id="comment_list">
+                    {% get_comment_list blog as comments %}
+                    {% for comment in comments %}
+                        <div class="w3-container">
+                            <div id="root_{{ comment.pk }}" class="comment">
+                                <span>{{ comment.user.get_nickname_or_username }}</span>
+                                <span>({{ comment.comment_time | date:"Y-m-d H:i:s" }})</span>
+                                <div id="comment_{{ comment.pk }}">
+                                    {{ comment.text | safe }}
+                                </div>
+                                <a href="javascript:reply({% if user.is_authenticated %}1{% else %}0{% endif %},{{ comment.pk }});">回复</a>
+
+                                {% for reply in comment.root_comment.all %}
+                                    <div class="reply">
+                                        <span>{{ reply.user.get_nickname_or_username }}:</span>
+                                        <span>{{ reply.comment_time | date:"Y-m-d H:i:s" }}</span>
+                                        <span>回复</span>
+                                        <span>{{ reply.reply_to.get_nickname_or_username }}:</span>
+                                        <div id="comment_{{ reply.pk }}">
+                                            {{ reply.text | safe }}
+                                        </div>
+                                        <a href="javascript:reply({% if user.is_authenticated %}1{% else %}0{% endif %},{{ reply.pk }});">回复</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <span id="no_comment">暂无评论</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <form id="login_medal_form" action="" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">SIGNIN</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% for field in login_modal_form %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    <br>
+                    {% endfor %}
+                    <span id="login_medal_tip" class="text-danger"></span>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">登录</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block popular_posts %}
+<div class="w3-card w3-margin">
+    <div class="w3-container w3-padding">
+        <h4>Popular Posts</h4>
+    </div>
+        <ul class="w3-ul w3-hoverable w3-white">
+            {% for blog in hot_blog_for_7_days %}
+            <li class="w3-padding-16 w3-container">
+                <img src="{{ blog.cover_min.url }}" alt="cover min" class="w3-left w3-margin-right" style="width:50px">
+                    <a href="{% url 'blog_id' blog.id %}">
+                        <span class="w3-large">{{ blog.title }}</span>
+                    </a><br>
+                <span>{{ blog.title_description }}</span>
+            </li>
+            {% endfor %}
+    </ul>
+</div>
+<hr>
+{% endblock %}
+
+{% block tags %}
+<div class="w3-card w3-margin">
+    <div class="w3-container w3-padding">
+        <h4><a href="{% url 'archive' %}">Tags & Category</a></h4>
+    </div>
+    <div class="w3-container w3-white">
+        <div class="w3-margin-top">
+            <p>
+                {% for tag in blog.tag.all %}
+                    <a href="{% url 'tag_name' tag.name %}" style="text-decoration: none;"><span class="w3-tag w3-light-black w3-hover-shadow w3-small w3-margin-bottom">{{ tag.name }}</span></a>
+                {% endfor %}
+                {% for tag in tags %}
+                    {% if tag not in blog.tag.all %}
+                    <a href="{% url 'tag_name' tag.name %}" style="text-decoration: none;"><span class="w3-tag w3-light-gray w3-hover-shadow w3-small w3-margin-bottom">{{ tag.name }}</span></a>
+                    {% endif %}
+                {% endfor %}
+            </p>
+            <hr>
+            <p>
+                <a href="{% url 'category_name' blog.category.name %}"><span class="w3-tag w3-light-black w3-hover-shadow w3-small w3-margin-bottom">{{ blog.category.name }}</span></a>
+                {% for category in categorys %}
+                    {% if category != blog.category %}
+                <a href="{% url 'category_name' category.name %}"><span class="w3-tag w3-light-gray w3-hover-shadow w3-small w3-margin-bottom">{{ category.name }}</span></a>
+                    {% endif %}
+                {% endfor %}
+            </p>
+            <hr>
+            <p><a href="/archive/" title="ReadNum & Archive Tags">More Info »</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer%}
+<div class="w3-hide-small">
+    {% if has_prev %}
+        <a href="{% url 'blog_id' blog_prev.id %} " rel="prev" style="text-decoration: none;">
+            <button class="w3-button w3-black w3-padding-large w3-margin-bottom " data-toggle="tooltip" data-placement="bottom" title="{{ blog_prev.title }}">
+                    Previous
+            </button>
+        </a>
+    {% else %}
+        <button class="w3-button w3-disabled w3-black w3-padding-large w3-margin-bottom">Previous</button>
+    {% endif %}
+
+    {% if has_next %}
+        <a href="{% url 'blog_id' blog_next.id %}" rel="next" style="text-decoration: none;">
+            <button class="w3-button w3-black w3-padding-large w3-margin-bottom" data-toggle="tooltip" data-placement="bottom" title="{{ blog_next.title }}">
+                     Next »
+            </button>
+        </a>
+    {% else %}
+            <button class="w3-button w3-disabled w3-black w3-padding-large w3-margin-bottom">Next »</button>
+    {% endif %}
+</div>
+{% endblock %}
+{% block footer_small %}
+<div class="w3-hide-large w3-hide-medium">
+    <div class="btn-group w3-border w3-round mb-2" role="group" aria-label="Basic example" style="width: 100%">
+        {% if has_prev %}
+                <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="{{ blog_prev.title }}"><a href="{% url 'blog_id' blog_prev.id %} " rel="prev" style="text-decoration: none;"><i class="fa fa-angle-double-left" aria-hidden="true"></i>  Previous</a></button>
+        {% else %}
+            <button type="button" class="btn btn-secondary" disabled><i class="fa fa-angle-double-left" aria-hidden="true"></i>  Previous</button>
+        {% endif %}
+        {% if has_next %}
+                <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="{{ blog_next.title }}"><a href="{% url 'blog_id' blog_next.id %}" rel="next" style="text-decoration: none;">Next  <i class="fa fa-angle-double-right" aria-hidden="true"></i></a></button>
+        {% else %}
+            <button type="button" class="btn btn-secondary" disabled>Next  <i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        function reply(log_id, reply_comment_id) {
+            //设置值
+            if(log_id==0){
+                $('#login_modal').modal('show');
+            }else {
+                $('#reply_comment_id').val(reply_comment_id);
+                var html = $("#comment_" + reply_comment_id).html();
+                $('#reply_content').html(html);
+                $('#reply_content_container').show();
+
+                $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function () {
+                    CKEDITOR.instances['id_text'].focus();
+                })
+            }
+        }
+        function numFormat(num) {
+            return ('00' + num).substr(-2);
+        }
+        function timeFormat(timestamp){
+            var datetime = new Date(timestamp * 1000);
+            var year = datetime.getFullYear();
+            var month = numFormat(datetime.getMonth() + 1);
+            var day = numFormat(datetime.getDate());
+            var hour = numFormat(datetime.getHours());
+            var minute = numFormat(datetime.getMinutes());
+            var second = numFormat(datetime.getSeconds());
+            return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+        }
+        $("#comment_form").submit(function(){
+            // 判断是否为空
+            $("#comment_error").text('');
+            if(CKEDITOR.instances["id_text"].document.getBody().getText().trim()==''){
+                $("#comment_error").text('评论内容不能为空');
+                return false;
+            }
+
+            // 更新数据到textarea
+            CKEDITOR.instances['id_text'].updateElement();
+
+            // 异步提交
+            $.ajax({
+                url: "{% url 'update_comment' %}",
+                type: 'POST',
+                dataType: "json",
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    console.log(data);
+                    if(data['status']=="SUCCESS"){
+                        if($('#reply_comment_id').val()=='0'){
+                            // 插入评论
+                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span> (' + timeFormat(data['comment_time']) + ')：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
+                            $("#comment_list").prepend(comment_html);
+                        }else{
+                            //插入回复
+                            var reply_html ='<div class="reply"><span>' + data['username'] + '</span><span> (' + timeFormat(data['comment_time']) + ')</span><span> 回复 </span><span>' + data['reply_to'] + '：</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">回复</a></div>';
+                            $("#root_" + data['root_pk']).append(reply_html);
+                        }
+
+                        // 清空编辑框的内容
+                        CKEDITOR.instances['id_text'].setData('');
+                        $('#reply_content_container').hide();
+                        $('#reply_comment_id').val('0');
+                        $('#no_comment').remove();
+                        $("#comment_error").text('评论成功');
+                    }else{
+                        // 显示错误信息
+                            $("#comment_error").text(data['message']);
+                    }
+                },
+                error: function(xhr){
+                    console.log(xhr);
+                }
+            });
+            return false;
+        });
+        $("#login_medal_form").submit(function(event){
+            event.preventDefault();
+            $.ajax({
+                url: '{% url "login_for_medal" %}',
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    if(data['status']=='SUCCESS'){
+                        window.location.reload();
+                    }else{
+                        $('#login_medal_tip').text('用户名或密码不正确');
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
