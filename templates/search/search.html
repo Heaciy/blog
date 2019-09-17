@@ -37,10 +37,39 @@
                 <div class="w3-container">
                     <form class="my-2" role="search" method="get" action="{% url 'haystack_search' %}">
                         <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
-                        <button type="button" class="btn btn-dark"><i class="fa fa-search" aria-hidden="true"></i></button>
                     </form>
                 </div>
             </div>
+           <div class="sticky-top w3-card w3-margin w3-white">
+                <div class="w3-container">
+                    <form class="my-2" role="search" method="get" action="{% url 'haystack_search' %}">
+                        <div class="input-group">
+                            <input class="form-control py-2 border-right-0 border" type="search" name="q" placeholder="Search" aria-label="Search" required>
+                            <span class="input-group-append">
+                              <button class="btn btn-outline-secondary border-left-0 border" type="button">
+                                    <i class="fa fa-search"></i>
+                              </button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+           </div>
+
+           <div class="sticky-top w3-card w3-margin w3-white">
+                <div class="w3-container">
+                    <form class="my-2" role="search" method="get" action="http://www.google.com/search">
+                        <div class="input-group">
+                            <input class="form-control py-2 border-right-0 border" type="search" name="q" placeholder="Search" aria-label="Search" required>
+                            <span class="input-group-append">
+                              <button class="btn btn-outline-secondary border-left-0 border" type="button">
+                                    <i class="fa fa-google"></i>
+                              </button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
    </div>
 </div>
