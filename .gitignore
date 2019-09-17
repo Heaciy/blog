@@ -6,3 +6,4 @@ migrations/
 settings.py
 statics/admin/
 statics/ckeditor/
+media/
