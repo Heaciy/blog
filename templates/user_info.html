@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
+{% block title %}Heyis.me|User Info{% endblock %}
+
 {% block others %}
 <div class="w3-content" style="max-width:1400px">
     {% if user.is_authenticated %}
