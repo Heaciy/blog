@@ -47,9 +47,11 @@
         <h5>{{ blog.title_description }}, <i class="fa fa-calendar"></i>  <span class="w3-opacity">{{ blog.create_time | date:"Y m d" }}</span>,  <i class='far fa-eye'></i>  <span  class="w3-opacity">{{ blog.get_click_nums}}</span></h5>
     </div>
     <div class="w3-container">
-      <p>
-        {{ blog.content | safe }}
-      </p>
+        <div class="mx-lg-3 mx-md-3">
+            <p>
+                {{ blog.content | safe }}
+            </p>
+        </div>
       <div class="w3-row">
           <div class="w3-col m8 s12">
               <p><a href="javascript:history.go(-1);" style="text-decoration: none;"><button class="w3-button w3-padding-large w3-white w3-border"><b>&laquo;Back</b></button></a></p>
