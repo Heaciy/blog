@@ -6,14 +6,26 @@
    <div class="row no-gutters flex-column-reverse flex-md-row">
        <div class="col-md-8">
            <div class="w3-card-4 w3-margin w3-white">
-               <img src="/statics/images/p_p.png" alt="Privacy Policy" style="width:100%">
-               <div class="w3-container">
+               <div class="pb-3">
                     {% if query %}
                        {% for blog in page.object_list %}
-                           <p>
-                               <a href="{% url 'blog_id' blog.object.id %}"><h3>{{ blog.object.title }}</h3></a>
-                           </p>
-                            <p>{% highlight blog.object.content with query %}</p>
+                           <div class="w3-container">
+                               <div class="row no-gutters">
+                                   <div class="col-lg-4 col-md-4 col-3 ">
+                                       <div class="w3-center w3-margin-right w3-margin-top">
+                                           <img src="{{ blog.object.cover_min.url }}" alt="cover min" style="width: 100%;">
+                                       </div>
+                                   </div>
+                                   <div class="col-lg-8 col-md-8 col-9">
+                                        <p>
+                                           <a href="{% url 'blog_id' blog.object.id %}"><h4>{{ blog.object.title }}</h4></a>
+                                            <i class="fa fa-calendar"></i>  <span class="w3-opacity">{{ blog.object.create_time | date:"Y m d" }}</span>
+                                            <p>{% highlight blog.object.content with query %}</p>
+                                            <p><a href="{% url 'blog_id' blog.object.id %}" rel="contents" style="text-decoration: none;"><button class="w3-left w3-button w3-padding-large w3-white w3-border"><b>READ MORE »</b></button></a></p>
+                                        </p>
+                                   </div>
+                               </div>
+                           </div>
                        {% empty %}
                            <p>No results found.</p>
                        {% endfor %}
@@ -33,13 +45,6 @@
            <hr>
        </div>
        <div class="col-md-4">
-            <div class="w3-card w3-margin w3-white">
-                <div class="w3-container">
-                    <form class="my-2" role="search" method="get" action="{% url 'haystack_search' %}">
-                        <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
-                    </form>
-                </div>
-            </div>
            <div class="w3-card w3-margin w3-white">
                 <div class="w3-container">
                     <form class="my-2" role="search" method="get" action="{% url 'haystack_search' %}">
@@ -54,7 +59,6 @@
                     </form>
                 </div>
            </div>
-
            <div class="w3-card w3-margin w3-white">
                 <div class="w3-container">
                     <form class="my-2" role="search" method="get" action="http://www.google.com/search">
@@ -69,7 +73,6 @@
                     </form>
                 </div>
             </div>
-
         </div>
    </div>
 </div>
