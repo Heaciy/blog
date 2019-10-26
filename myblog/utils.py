@@ -6,11 +6,11 @@ from myblog.models import Tag, Blog
 from django.core.cache import cache
 
 def get_weight(num):
-    if num <= 2:
+    if num <= 1:
         return 2
-    elif num <= 4:
+    elif num <= 3:
         return 3
-    elif num <= 6:
+    elif num <= 5:
         return 4
     else:
         return 5
