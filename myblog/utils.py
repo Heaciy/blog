@@ -7,14 +7,11 @@ from django.core.cache import cache
 
 def data_for_json():
     tag_list = Tag.objects.annotate(blog_num=Count('blog')).filter(blog_num__gt=0)
-    word = []
-    num = []
+    words_json = []
     for tag in tag_list:
-        word.append(tag.name)
-        num.append(tag.blog_num)
-    dictionary = dict(zip(word, num))
-    words_json = [{'text': word, 'weight': num} for word, num in dictionary.items()]
-    return  words_json
+        words_json.append({'text': tag.name, 'weight': tag.blog_num, 'link': '/tags/'+tag.name})
+    print(words_json)
+    return words_json
 
 def get_7_days_hot_days():
     today = timezone.now().date()

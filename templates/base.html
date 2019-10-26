@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/statics/css/hmbrgr.css" type="text/css">
     <link rel="stylesheet" href="/statics/css/preloader.css" type="text/css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster"><!--字体-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Caslon+Text|Lora|Merriweather&display=swap"><!--字体-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Big+Shoulders+Text|PT+Serif|Varela+Round&display=swap"><!--字体-->
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -32,11 +32,17 @@
     .w3-tangerine {
                   font-family: "Tangerine", serif;
                   }
-    .w3-Merriweather {
-                  font-family: 'Merriweather', serif;
-                  }
+    .w3-fonts {
+                  font-family: 'PT Serif', serif;
+              }
+    .w3-num {
+                font-family: 'Big Shoulders Text', cursive;
+            }
+    .w3-num1 {
+                font-family: 'Varela Round', sans-serif;
+            }
     span.highlighted {
-        color: #009688;
+        color: #009688;<!--搜索结果高亮-->
     }
     {% block style %}{% endblock %}
 </style>
@@ -64,10 +70,11 @@ and is wrapped around the whole page content, except for the footer in this exam
 <!-- Introduction menu -->
 <div class="w3-col l4">
   <!-- About Card -->
-    {% block siderbar %}{% endblock %}
     {% block about_me %}{% endblock %}
   <!-- Posts -->
     {% block popular_posts %}{% endblock %}
+  <!-- siderbar -->
+    {% block siderbar %}{% endblock %}
   <!-- Labels / tags -->
     {% block tags %}{% endblock %}
     <hr>

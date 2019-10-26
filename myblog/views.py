@@ -153,7 +153,7 @@ class ArichiveView(View):
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
             page = 1
-        p = Paginator(all_blogs, 5, request=request)
+        p = Paginator(all_blogs, 20, request=request)
         all_blogs = p.page(page)
         html = template.render(locals())
         return HttpResponse(html)

@@ -3,9 +3,8 @@
 {% block title %}Heyis.me|Archive{% endblock %}
 
 {% block header_extends %}
-{# <link rel="stylesheet" href="/statics/css/archive.css"> #}
+<link rel="stylesheet" href="/statics/css/archive.css">
 <link rel="stylesheet" type="text/css" href="/statics/css/jqcloud.css" />
-
 <script type="text/javascript" src="/statics/js/jqcloud-1.0.4.js"></script>
 <script src="https://cdn.highcharts.com.cn/highcharts/highcharts.js"></script>
 {% endblock %}
@@ -16,102 +15,32 @@
 </div>
 {% endblock %}
 
-{% block pre %}
-<div class="w3-card-4 w3-margin">
-    <div class="w3-container w3-padding">
-        <h4>ReadNums</h4>
-    </div>
-<div class="w3-container w3-white w3-center">
-    <!-- 图表容器 DOM -->
-    <div id="container"></div>
-
-    <script>
-        // 图表配置
-        var options = {
-            chart: { type: 'line' },                        //指定图表的类型，默认是折线图（line）
-            title: { text: null },                          // 标题
-            xAxis: {
-                categories: {{ dates|safe }},                // x 轴分类
-                tickmarkPlacement: 'on',
-            },
-            yAxis: {
-                title: { text: null },                      // y 轴标题
-                labels: { enabled: false },
-                gridLineDashStyle: 'Dash',
-            },
-            series: [{                                      // 数据列
-                name: '阅读量',                             // 数据列名
-                data: {{ click_nums }}                      // 数据
-            }],
-            plotOptions: {
-                line: {
-                    dataLabels: { enabled: true }
-                        }
-            },
-            //legend: { enabled: false },
-            credits: { enabled: false },
-        };
-        // 图表初始化函数
-        var chart = Highcharts.chart('container', options);
-    </script>
-
-</div>
-</div>
-<hr>
-<div class="w3-card-4 w3-margin">
-    <div class="w3-container w3-padding">
-        <h4>Tags</h4>
-    </div>
-<div class="w3-container w3-white w3-padding">
-    <div id="cloud"></div>
-
-<script type="text/javascript">
-        var word_array = {{ tags_json|safe }};
-        $(function() {
-        // When DOM is ready, select the container element and call the jQCloud method, passing the array of words as the first argument.
-        $("#cloud").jQCloud(word_array,{
-            removeOverflowing: true,
-            shape: "elliptic",
-            height: 200,
-            margin: 0
-            }
-        );
-      });
-    </script>
-
-    <hr>
-
-    {% for tag in tag_list %}
-        <a href="{% url 'tag_name' tag.name %}"  style="text-decoration: none;"><button class="w3-btn w3-round w3-small w3-padding-small w3-light-blue w3-margin-bottom">{{tag.name}} ({{ tag.blog_num }})</button></a>
-    {% empty %}<span>暂无分类</span>
-    {% endfor %}
-</div>
-</div>
-<hr>
-{% endblock %}
-
 {% block content %}
-<div class="w3-card-4 w3-margin">
+<div class="w3-card-4 w3-margin w3-fonts">
     <div class="w3-container w3-padding">
-        <h4>Archive (Group By Time)</h4>
+        <h4 class="w3-fonts">Archive</h4>
     </div>
-<div class="w3-white w3-padding">
-    <div class="w3-padding w3-ul w3-container">
-{% regroup all_blogs.object_list by create_time.year as dates_by_year %}
-    {% for year in dates_by_year %}
-        {{ year.grouper }}
-        {% regroup year.list by create_time.month as dates_by_month %}
-        {% for month in dates_by_month %}
-        {{ month.grouper }}
-            {% for blog in month.list %}
-                <a class="post-title-link" href="{% url 'blog_id' blog.id %}" itemprop="url">
-                    <li><p>{{ blog.title }}<div class="w3-right">{{blog.create_time}}</div></p></li>
-                </a>
+    <div class="w3-white w3-padding">
+        <div class="w3-padding w3-ul w3-container">
+        {% regroup all_blogs.object_list by create_time.year as dates_by_year %}
+            {% for year in dates_by_year %}
+                <h3 class="w3-fonts">{{ year.grouper }}年</h3>
+                <div class="mx-lg-3">
+                    {% regroup year.list by create_time.month as dates_by_month %}
+                    {% for month in dates_by_month %}
+                        <h4 class="w3-fonts">{{ month.grouper }}月</h4>
+                        <div class="w3-round w3-light-grey">
+                            {% for blog in month.list %}
+                                <a class="post-title-link" href="{% url 'blog_id' blog.id %}" itemprop="url">
+                                    <li><p>{{ blog.title }}<span class="w3-right w3-num w3-opacity">{{blog.create_time}}</span></p></li>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
-        {% endfor %}
-    {% endfor %}
         </div>
-</div>
+    </div>
 </div>
 {# 分页 #}
 <div class="w3-center">
@@ -176,6 +105,75 @@
 <hr>
 {% endblock %}
 
+{% block siderbar %}
+<div class="w3-card-4 w3-margin">
+    <div class="w3-container w3-padding">
+        <h4>ReadNums</h4>
+    </div>
+    <div class="w3-container w3-white w3-center">
+    <!-- 图表容器 DOM -->
+    <div id="container"></div>
+    <script>
+        // 图表配置
+        var options = {
+            chart: { type: 'line' },                        //指定图表的类型，默认是折线图（line）
+            title: { text: null },                          // 标题
+            xAxis: {
+                categories: {{ dates|safe }},                // x 轴分类
+                tickmarkPlacement: 'on',
+            },
+            yAxis: {
+                title: { text: null },                      // y 轴标题
+                labels: { enabled: false },
+                gridLineDashStyle: 'Dash',
+            },
+            series: [{                                      // 数据列
+                name: '阅读量',                             // 数据列名
+                data: {{ click_nums }}                      // 数据
+            }],
+            plotOptions: {
+                line: {
+                    dataLabels: { enabled: true }
+                        }
+            },
+            //legend: { enabled: false },
+            credits: { enabled: false },
+        };
+        // 图表初始化函数
+        var chart = Highcharts.chart('container', options);
+    </script>
+</div>
+</div>
+<hr>
+<div class="w3-card-4 w3-margin">
+    <div class="w3-container w3-padding">
+        <h4>Tags</h4>
+    </div>
+<div class="w3-container w3-white w3-padding">
+    <div id="cloud"></div>
+    <script type="text/javascript">
+            var word_array = {{ tags_json|safe }};
+            $(function() {
+            // When DOM is ready, select the container element and call the jQCloud method, passing the array of words as the first argument.
+            $("#cloud").jQCloud(word_array,{
+                removeOverflowing: true,
+                shape: "elliptic",
+                height: 150,
+                margin: 0
+                }
+            );
+          });
+    </script>
+    <hr>
+    {% for tag in tag_list %}
+        <a href="{% url 'tag_name' tag.name %}"  style="text-decoration: none;"><span class="w3-tag w3-light-grey w3-hover-shadow w3-small w3-margin-bottom">{{tag.name}} <span class="w3-opacity w3-num1">({{ tag.blog_num }})</span></span></a>
+    {% empty %}<span>暂无分类</span>
+    {% endfor %}
+</div>
+</div>
+<hr>
+{% endblock %}
+
 {% block tags %}
     <div class="w3-card w3-margin">
     <div class="w3-container w3-padding">
@@ -187,8 +185,7 @@
             {% for tag in all_tags %}
             <a href="{% url 'tag_name' tag.name %}" style="text-decoration: none;"><span class="w3-tag w3-light-grey w3-hover-shadow w3-small w3-margin-bottom">{{ tag.name }}</span></a>
             {% endfor %}
-        </p>
-        <hr>
+        </p><hr>
         <p>
             {% for category in all_categorys %}
             <a href="{% url 'category_name' category.name %}"><span class="w3-tag w3-light-grey w3-hover-shadow w3-small w3-margin-bottom">{{ category.name }}</span></a>

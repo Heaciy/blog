@@ -15,13 +15,15 @@
             <img src="{{ blog.cover.url }}" alt="cover" style="width:100%">
             <div class="w3-container">
                 <h3><b>{{ blog.title }}</b></h3>
-                <h5>{{ blog.title_description }}, <i class="fa fa-calendar"></i>  <span class="w3-opacity">{{ blog.create_time | date:"Y m d" }}</span>,  <i class='far fa-eye'></i>  <span  class="w3-opacity">{{ blog.get_click_nums}}</span></h5>
+                <h5 class="w3-num">{{ blog.title_description }}, <i class="fa fa-calendar"></i>  <span class="w3-opacity w3-num">{{ blog.create_time | date:"Y m d" }}</span>,  <i class='far fa-eye'></i>  <span  class="w3-opacity w3-num">{{ blog.get_click_nums}}</span></h5>
             </div>
 
             <div class="w3-container">
-                <p>
-                    {{ blog.content | safe | truncatechars:100 }}
-                </p>
+                <div class="w3-fonts">
+                    <p>
+                        {{ blog.content | safe | truncatechars:100 }}
+                    </p>
+                </div>
                 <div class="w3-row">
                     <div class="w3-col m8 s12">
                         <p><a href="{% url 'blog_id' blog.id %}" rel="contents" style="text-decoration: none;"><button class="w3-button w3-padding-large w3-white w3-border"><b>READ MORE »</b></button></a></p>
