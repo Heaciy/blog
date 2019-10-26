@@ -5,12 +5,21 @@ from django.db.models.aggregates import Count
 from myblog.models import Tag, Blog
 from django.core.cache import cache
 
+def get_weight(num):
+    if num <= 2:
+        return 2
+    elif num <= 4:
+        return 3
+    elif num <= 6:
+        return 4
+    else:
+        return 5
+
 def data_for_json():
     tag_list = Tag.objects.annotate(blog_num=Count('blog')).filter(blog_num__gt=0)
     words_json = []
     for tag in tag_list:
-        words_json.append({'text': tag.name, 'weight': tag.blog_num, 'link': '/tags/'+tag.name})
-    print(words_json)
+        words_json.append({'text': tag.name, 'weight': get_weight(tag.blog_num), 'link': '/tags/'+tag.name})
     return words_json
 
 def get_7_days_hot_days():
