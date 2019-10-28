@@ -2,6 +2,7 @@
 
 {% load staticfiles %}
 {% load comment_tags %}
+{% load myfilters %}
 
 {% block title %}Heyis.me|{{ blog.title }}{% endblock %}
 
@@ -161,17 +162,20 @@
 
                 <div class="modal-body">
                     {% csrf_token %}
-                    {% for field in login_modal_form %}
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    <br>
-                    {% endfor %}
+					<div data-validate="Username is required">
+						<span class="label-input100">Username</span>
+						<span>{{ login_modal_form.username_or_email | addcss:"form-control" }}</span>
+					</div>
+					<div data-validate = "Password is required">
+						<span>Password</span>
+						<span>{{ login_modal_form.password | addcss:"form-control" }}</span>
+					</div>
                     <span id="login_medal_tip" class="text-danger"></span>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">登录</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-outline-success">登录</button>
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">关闭</button>
                 </div>
             </form>
         </div>
