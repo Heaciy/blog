@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^comment/', include('comment.urls')),
     url(r'^user_info/', user_info, name='user_info'),
     url(r'^change_nikename/', change_nikename_medal, name='change_nikename_medal'),
-    url('bind_email/', bind_email, name='bind_email'),
+    url(r'^bind_email/', bind_email, name='bind_email'),
     url(r'^send_verification_code/', send_verification_code, name='send_verification_code'),
     url(r'^change_password/', change_password, name='change_password'),
     url(r'^forgot_password/', forgot_password, name='forgot_password'),

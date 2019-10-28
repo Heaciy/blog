@@ -23,9 +23,7 @@
         <time>{{ blog.create_time | date:"M d Y" }}</time>
     </li>
         {% empty %}
-        <li class="w3-ul w3-hoverable w3-white">
-            Sorry,no athletes in this list.
-        </li>
+        <p><img src="/statics/images/noresults.png" style="width: 100%"></p>
         {% endfor %}
     </ul>
 </div>
