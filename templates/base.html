@@ -41,6 +41,11 @@
     .w3-num1 {
                 font-family: 'Varela Round', sans-serif;
             }
+    .page-bottom{
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
     span.highlighted {
         color: #009688;<!--搜索结果高亮-->
     }
@@ -86,7 +91,7 @@ and is wrapped around the whole page content, except for the footer in this exam
 </div>
 
 <!-- Footer -->
-<footer class="w3-dark-grey">
+<footer class="w3-dark-grey footer">
     <div class="w3-container row flex-md-row">
         <div class="col-sm-3 col-12 order-4 order-sm-1 w3-container w3-padding-32">
             <div class="w3-hide-small">
@@ -214,6 +219,23 @@ $(function () {
 });
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
+});
+$(function () {
+   $(window).resize(function(){
+        var body_height = $(document.body).outerHeight(true);
+        var bottom_height = $("#footer").outerHeight(true);
+        var window_height = $(window).height();
+        if($(".footer").hasClass('page-bottom')){
+            if(body_height + bottom_height >= window_height){
+                $(".footer").removeClass('page-bottom');
+            }
+        }else{
+            if(body_height < window_height){
+                $(".footer").addClass('page-bottom');
+            }
+        }
+    });
+    $(window).trigger('resize');
 });
 </script>
 {% block script_extends %}{% endblock %}
