@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from myblog.views import IndexView, BlogDetailView, TagDetailView, ArichiveView, CategoryDetailView, get_faq
-from user.views import login, logout, register, user_info, login_for_medal, change_nikename_medal, send_verification_code, bind_email, change_password, forgot_password
+from user.views import login, logout, register, user_info, login_for_medal, change_nikename_medal, send_verification_code, bind_email, change_password, forgot_password, login_by_github, bind_github, create_user_by_github
 #为了使media也可访问
 from django.conf import settings
 from django.conf.urls.static import static
@@ -37,11 +37,14 @@ urlpatterns = [
     url(r'^comment/', include('comment.urls')),
     url(r'^user_info/', user_info, name='user_info'),
     url(r'^change_nikename/', change_nikename_medal, name='change_nikename_medal'),
-    url(r'^bind_email/', bind_email, name='bind_email'),
+    url(r'bind_email/', bind_email, name='bind_email'),
     url(r'^send_verification_code/', send_verification_code, name='send_verification_code'),
     url(r'^change_password/', change_password, name='change_password'),
     url(r'^forgot_password/', forgot_password, name='forgot_password'),
     url(r'^search/', include('haystack.urls')),
+    url(r'login_by_github/', login_by_github, name='login_by_github'),
+    url(r'bind_github', bind_github, name='bind_github'),
+    url(r'create_user_by_github', create_user_by_github, name='create_user_by_github'),
 ]
 #为了使media也可访问
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

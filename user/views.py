@@ -1,6 +1,9 @@
 import string
 import random
 import time
+import json
+from urllib.request import urlopen
+from urllib.parse import urlencode, parse_qs
 from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -8,8 +11,85 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.conf import settings
-from user.forms import LoginForm, RegForm, ChangeNicknameForm, BindEmailForm, ChangePasswordForm, ForgotPasswordForm
-from .models import Profile
+from .forms import LoginForm, RegForm, ChangeNicknameForm, BindEmailForm, ChangePasswordForm, ForgotPasswordForm, BindGithubForm
+from .models import Profile, OAuthRelationship
+
+def login_by_github(request):
+    code = request.GET['code']
+    state = request.GET['state']
+    if state != settings.GITHUB_STATE:
+        raise Exception("state error")
+    #获取Access_token
+    params = {
+        'client_id': settings.GITHUB_CLIENT_ID,
+        'client_secret': settings.GITHUB_CLIENT_SECRET,
+        'code': code,
+        'redirect_uri': settings.GITHUB_REDIRECT_URL,
+        'state': state,
+    }
+    response = urlopen('https://github.com/login/oauth/access_token?' + urlencode(params))
+    data = response.read().decode('utf8')
+    access_token = parse_qs(data)['access_token'][0]
+    response = urlopen('https://api.github.com/user?access_token=' + access_token)
+    data = response.read().decode('utf8')
+    node_id = json.loads(data)['node_id']
+    github_login = json.loads(data)['login']
+    #获取node_id是否有关联用户
+    if OAuthRelationship.objects.filter(node_id=node_id, oauth_type=0).exists():
+        relationship = OAuthRelationship.objects.get(node_id=node_id, oauth_type=0)
+        auth.login(request, relationship.user)
+        return redirect(reverse('index'))
+    else:
+        request.session['node_id'] = node_id
+        request.session['github_login'] = github_login
+        return redirect(reverse('bind_github'))
+
+def bind_github(request):
+    if request.method == 'POST':
+        bind_github_form = BindGithubForm(request.POST)
+        if bind_github_form.is_valid():
+            user = bind_github_form.cleaned_data['user']
+            node_id = request.session.pop('node_id')
+            #记录关系
+            relationship = OAuthRelationship()
+            relationship.user = user
+            relationship.node_id = node_id
+            relationship.oauth_type = 0
+            relationship.save()
+            #登陆
+            auth.login(request, user)
+            return redirect(reverse('index'))
+    else:
+        bind_github_form = BindGithubForm()
+
+    Forgotpasswordform = ForgotPasswordForm()
+    context = {}
+    context['bind_github_form'] = bind_github_form
+    context['Forgotpasswordform'] = Forgotpasswordform
+    return render(request, 'bind_github.html', context)
+
+def create_user_by_github(request):
+    #创建用户
+    username = request.session.pop('github_login')
+    #username = int(time.time())
+    password = username + '@heyis.me'
+    #password = ''.join(random.sample(string.ascii_letters + string.digits, 16))
+    user = User.objects.create_user(username, '', password)
+    # 创建昵称
+    profile = Profile()
+    profile.user = user
+    profile.nickname = username
+    profile.save()
+    #记录关系
+    node_id = request.session.pop('node_id')
+    relationship = OAuthRelationship()
+    relationship.user = user
+    relationship.node_id = node_id
+    relationship.oauth_type = 0
+    relationship.save()
+    # 登陆
+    auth.login(request, user)
+    return redirect(reverse('index'))
 
 def login_for_medal(request):
     login_form = LoginForm(request.POST)

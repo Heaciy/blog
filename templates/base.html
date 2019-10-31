@@ -127,7 +127,7 @@ and is wrapped around the whole page content, except for the footer in this exam
         <div class="col-sm-3 col-12 order-1 order-sm-4 w3-container w3-left w3-padding-32">
             <div class="w3-hide-small">
                 {% if user.is_authenticated %}
-                <h5 class="w3-tangerine"><a href="{% url 'user_info' %}">{{ user.username }}</a></h5>
+                <h5 class="w3-tangerine"><a href="{% url 'user_info' %}">{{ user.get_nickname_or_username }}</a></h5>
                     <p><i class="fa fa-home"></i><a href="/">    Home</a></p>
                     <p><i class="fa fa-sign-out"></i><a href="{% url 'logout' %}?from={{ request.get_full_path }}">    Logout</a></p>
                     {% if user.is_staff or user.is_superuser %}
@@ -160,7 +160,7 @@ and is wrapped around the whole page content, except for the footer in this exam
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb" style="background-color:transparent">
                             {% if user.is_authenticated %}
-                                <li class="breadcrumb-item"><a href="{% url 'user_info' %}">{{ user.username }}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'user_info' %}">{{ user.get_nickname_or_username }}</a></li>
                                 <li class="breadcrumb-item"><a href="{% url 'user_info' %}">Personal</a></li>
                                 <li class="breadcrumb-item" aria-current="page"><a href="{% url 'logout' %}?from={{ request.get_full_path }}">Logout</a></li>
                             {% else %}

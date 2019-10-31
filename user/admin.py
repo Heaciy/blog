@@ -1,7 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, OAuthRelationship
+
+@admin.register(OAuthRelationship)
+class OAuthRelationship(admin.ModelAdmin):
+    list_display = ('user', 'oauth_type', 'node_id')
 
 class ProfileInline(admin.StackedInline):
     model = Profile

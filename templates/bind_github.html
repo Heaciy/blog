@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-{% load staticfiles %}
-{% load user_tags %}
 <html lang="en">
 <head>
-	<title>Heyis.me|Login</title>
+	<title>Heyis.me|Bind Github</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" type="image/png" href="/statics/images/me.ico"/>
@@ -21,7 +19,7 @@
 			<div class="wrap-login100">
 				<div class="login100-form-title" style="background-image: url(/statics/images/bg-01.jpg);">
 					<span class="login100-form-title-1">
-						Sign In
+						Bind Github
 					</span>
 				</div>
 
@@ -29,16 +27,16 @@
 					{% csrf_token %}
 					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
 						<span class="label-input100">Username</span>
-						{{ login_form.username_or_email }}
+						{{ bind_github_form.username_or_email }}
 						<span class="focus-input100"></span>
 					</div>
 
 					<div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
 						<span class="label-input100">Password</span>
-						{{ login_form.password }}
+						{{ bind_github_form.password }}
 						<span class="focus-input100"></span>
 					</div>
-					<p class="text-danger">{{ login_form.non_field_errors.as_text }}</p>
+					<p class="text-danger">{{ bind_github_form.non_field_errors.as_text }}</p>
 
 					<div class="flex-sb-m w-full p-b-30">
 						<div>
@@ -48,22 +46,16 @@
 						</div>
 
 						<div>
-							<a href="{% url 'register' %}" class="txt1">
-								Register For Free?
+							<a href="{% url 'create_user_by_github' %}" class="txt1">
+								Use Github to Register?
 							</a>
 						</div>
 					</div>
 
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn" type="submit">
-							Login
+							Bind
 						</button>
-                        <nav aria-label="breadcrumb" class="m-l-10">
-                            <ol class="breadcrumb" style="background-color:transparent">
-                                <li class="breadcrumb-item"><a href="{% get_login_github_url %}"><i class="fa fa-github" style="font-size:24px" aria-hidden="true"></i></a></li>
-                                <li class="breadcrumb-item"><a href="#"><i class="fa fa-google" style="font-size:24px" aria-hidden="true"></i></a></li>
-                            </ol>
-                        </nav>
 					</div>
 				</form>
 			</div>
