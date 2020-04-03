@@ -9,7 +9,7 @@ from read_statistics.utils import read_statistics_once_read
 from django.db.models import Count
 from django.contrib.contenttypes.models import ContentType
 from read_statistics.utils import get_seven_days_click_date
-from myblog.utils import data_for_json, get_hot_blogs_from_cache
+from .utils import data_for_json, get_hot_blogs_from_cache
 
 # Create your views here.
 class IndexView(View):

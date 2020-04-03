@@ -16,8 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from myblog.views import IndexView, BlogDetailView, TagDetailView, ArichiveView, CategoryDetailView, get_faq
-from user.views import login, logout, register, user_info, login_for_medal, change_nikename_medal, send_verification_code, bind_email, change_password, forgot_password, login_by_github, bind_github, create_user_by_github
-#为了使media也可访问
+from user.views import login, logout, register, user_info, login_for_medal, change_nikename_medal, \
+    send_verification_code, bind_email, change_password, forgot_password, login_by_github, bind_github, \
+    create_user_by_github
+# 为了使media也可访问
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -46,5 +48,5 @@ urlpatterns = [
     url(r'bind_github', bind_github, name='bind_github'),
     url(r'create_user_by_github', create_user_by_github, name='create_user_by_github'),
 ]
-#为了使media也可访问
+# 为了使media也可访问
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
