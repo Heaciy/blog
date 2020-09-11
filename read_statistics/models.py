@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.fields import exceptions
 from django.utils import timezone
 
+
 class Clicknums(models.Model):
     click_num = models.IntegerField(verbose_name='阅读量', default=0)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -14,6 +15,7 @@ class Clicknums(models.Model):
         verbose_name = '阅读量'
         verbose_name_plural = verbose_name
 
+
 class ClicknumsExpand():
     def get_click_nums(self):
         try:
@@ -22,6 +24,7 @@ class ClicknumsExpand():
             return clicknums.click_num
         except exceptions.ObjectDoesNotExist:
             return 0
+
 
 class ClickDetail(models.Model):
     date = models.DateField(default=timezone.now)

@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from .models import Comment
 from .forms import CommentForm
 
+
 # Create your views here.
 def update_comment(request):
     comment_form = CommentForm(request.POST, user=request.user)
@@ -19,9 +20,9 @@ def update_comment(request):
             comment.parent = parent
             comment.reply_to = parent.user
         comment.save()
-        #发送邮件通知
+        # 发送邮件通知
         comment.send_mail()
-        #返回数据
+        # 返回数据
         data['status'] = 'SUCCESS'
         data['username'] = comment.user.get_nickname_or_username()
         data['comment_time'] = comment.comment_time.timestamp()

@@ -2,12 +2,17 @@ from django.contrib import admin
 from myblog.models import Blog, Category, Tag
 from django.contrib.auth.models import User
 
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'id')
+
+
 @admin.register(Tag)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'id')
+
+
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
     list_display = ['title', 'id', 'author', 'get_click_nums', 'category', 'create_time', 'modify_time']

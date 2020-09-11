@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 
+
 class SendMail(threading.Thread):
     def __init__(self, subject, text, email, fail_silently=False):
         self.subject = subject
@@ -19,11 +20,13 @@ class SendMail(threading.Thread):
         send_mail(
             self.subject,
             '',
-            'Heaciy'+ ' '+'<'+settings.EMAIL_HOST_USER+'>',
+            'Heaciy' + ' ' + '<' + settings.EMAIL_HOST_USER + '>',
             [self.email],
             fail_silently=self.fail_silently,
             html_message=self.text
         )
+
+
 # Create your models here.
 class Comment(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -36,6 +39,7 @@ class Comment(models.Model):
     root = models.ForeignKey('self', related_name="root_comment", null=True, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', related_name="parent_comment", null=True, on_delete=models.CASCADE)
     reply_to = models.ForeignKey(User, related_name="replies", null=True, on_delete=models.CASCADE)
+
     def send_mail(self):
         if self.parent is None:
             subject = '有人评论你的博客'

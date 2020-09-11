@@ -8,6 +8,7 @@ from imagekit.models import ProcessedImageField, ImageSpecField
 from imagekit.processors import ResizeToFill
 from django.contrib.contenttypes.fields import GenericRelation
 
+
 class Category(models.Model):
     """
     文章分类
@@ -20,6 +21,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Tag(models.Model):
     """
@@ -34,13 +36,15 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+
 class Blog(models.Model, ClicknumsExpand):
     """
     博客
     """
     title = models.CharField(verbose_name='标题', max_length=100)
     title_description = models.CharField(verbose_name='描述', max_length=200, default='')
-    cover_source = models.ImageField(max_length=100, upload_to='cover/%Y/%m/%d', default='cover/default/unamed.jpg', verbose_name='封面')
+    cover_source = models.ImageField(max_length=100, upload_to='cover/%Y/%m/%d', default='cover/default/unamed.jpg',
+                                     verbose_name='封面')
     cover = ImageSpecField(
         source="cover_source",
         processors=[ResizeToFill(700, 220)],
@@ -60,6 +64,7 @@ class Blog(models.Model, ClicknumsExpand):
     create_time = models.DateTimeField(verbose_name='创建时间', default=timezone.now)
     modify_time = models.DateTimeField(verbose_name='修改时间', auto_now=True)
     click_details = GenericRelation(ClickDetail)
+
     def get_url(self):
         return reverse('blog_id', kwargs={'blog_id': self.pk})
 
@@ -67,11 +72,12 @@ class Blog(models.Model, ClicknumsExpand):
         return self.author.email
 
     def __str__(self):
-        return "<Blog: %s>" %self.title
+        return "<Blog: %s>" % self.title
 
     class Meta:
         verbose_name = '我的博客'
         verbose_name_plural = verbose_name
+
 
 class Counts(models.Model):
     """
@@ -84,4 +90,3 @@ class Counts(models.Model):
     class Meta:
         verbose_name = '数目统计'
         verbose_name_plural = verbose_name
-

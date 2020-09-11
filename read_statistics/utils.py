@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.db.models import Sum
 import datetime
 
+
 def read_statistics_once_read(request, obj):
     ct = ContentType.objects.get_for_model(obj)
     key = "%s_%s_read" % (ct.model, obj.pk)
@@ -13,7 +14,7 @@ def read_statistics_once_read(request, obj):
         # 计数加一
         clicknums.click_num += 1
         clicknums.save()
-        #当天阅读数加一
+        # 当天阅读数加一
         date = timezone.now().date()
         clicDetail, created = ClickDetail.objects.get_or_create(content_type=ct, object_id=obj.pk, date=date)
         # 计数加一
@@ -21,6 +22,7 @@ def read_statistics_once_read(request, obj):
         clicDetail.save()
 
     return key
+
 
 def get_seven_days_click_date(content_type):
     today = timezone.now().date()
