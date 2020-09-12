@@ -13,7 +13,7 @@ class Category(models.Model):
     """
     文章分类
     """
-    name = models.CharField(verbose_name='文章类别', max_length=20)
+    name = models.CharField(verbose_name='文章类别', unique=True, max_length=20)
 
     class Meta:
         verbose_name = '文章类别'
@@ -27,7 +27,7 @@ class Tag(models.Model):
     """
     文章标签
     """
-    name = models.CharField(verbose_name='文章标签', max_length=20)
+    name = models.CharField(verbose_name='文章标签', unique=True, max_length=20)
 
     class Meta:
         verbose_name = '文章标签'
@@ -72,21 +72,8 @@ class Blog(models.Model, ClicknumsExpand):
         return self.author.email
 
     def __str__(self):
-        return "<Blog: %s>" % self.title
+        return "<Blog%d: %s>" % (self.id, self.title)
 
     class Meta:
         verbose_name = '我的博客'
-        verbose_name_plural = verbose_name
-
-
-class Counts(models.Model):
-    """
-    统计博客、分类和标签的数目
-    """
-    blog_nums = models.IntegerField(verbose_name='博客数目', default=0)
-    category_nums = models.IntegerField(verbose_name='分类数目', default=0)
-    tag_nums = models.IntegerField(verbose_name='标签数目', default=0)
-
-    class Meta:
-        verbose_name = '数目统计'
         verbose_name_plural = verbose_name
