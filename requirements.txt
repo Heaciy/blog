@@ -1,4 +1,4 @@
-Django==1.11.7
+Django==2.2.24
 django-appconf==1.0.3
 django-ckeditor==5.7.1
 django-haystack==2.8.1
